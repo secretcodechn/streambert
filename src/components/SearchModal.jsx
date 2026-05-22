@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { tmdbFetch, imgUrl } from "../utils/api";
 import { SearchIcon, CloseIcon } from "./Icons";
 import { storage } from "../utils/storage";
@@ -15,6 +16,7 @@ function saveHistory(history) {
 }
 
 export default function SearchModal({ apiKey, onSelect, onClose, offline }) {
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -119,7 +121,7 @@ export default function SearchModal({ apiKey, onSelect, onClose, offline }) {
           <input
             ref={inputRef}
             className="search-input"
-            placeholder="Search movies and series..."
+            placeholder={t("search.placeholder")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKey}
@@ -152,7 +154,7 @@ export default function SearchModal({ apiKey, onSelect, onClose, offline }) {
                 gap: 8,
               }}
             >
-              🌐 No internet, search is unavailable offline.
+              🌐 {t("search.noInternet")}
             </div>
           )}
 
@@ -163,7 +165,7 @@ export default function SearchModal({ apiKey, onSelect, onClose, offline }) {
           )}
 
           {!loading && query && results.length === 0 && (
-            <div className="search-empty">No results for "{query}"</div>
+            <div className="search-empty">{t("search.noResults", { query })}</div>
           )}
 
           {!loading &&
@@ -191,7 +193,7 @@ export default function SearchModal({ apiKey, onSelect, onClose, offline }) {
                 <span
                   className={`search-result-type ${r.media_type === "tv" ? "type-tv" : "type-movie"}`}
                 >
-                  {r.media_type === "tv" ? "Series" : "Movie"}
+                  {r.media_type === "tv" ? t("search.series") : t("search.movie")}
                 </span>
               </div>
             ))}
@@ -199,9 +201,9 @@ export default function SearchModal({ apiKey, onSelect, onClose, offline }) {
           {showHistory && (
             <div className="search-history">
               <div className="search-history-header">
-                <span className="search-history-label">Recent searches</span>
+                <span className="search-history-label">{t("search.recentSearches")}</span>
                 <button className="search-history-clear" onClick={clearHistory}>
-                  Clear all
+                  {t("search.clearAll")}
                 </button>
               </div>
               {history.map((term) => (
@@ -228,7 +230,7 @@ export default function SearchModal({ apiKey, onSelect, onClose, offline }) {
 
           {!query && history.length === 0 && (
             <div className="search-hint">
-              Search for movies and series &nbsp;·&nbsp; <kbd>ESC</kbd> to close
+              {t("search.hint")} &nbsp;·&nbsp; <kbd>ESC</kbd> {t("search.escToClose")}
             </div>
           )}
         </div>

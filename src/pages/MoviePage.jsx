@@ -38,6 +38,7 @@ import {
   ShieldBlockIcon,
   PopOutIcon,
 } from "../components/Icons";
+import { useTranslation } from "react-i18next";
 import DownloadModal from "../components/DownloadModal";
 import TrailerModal from "../components/TrailerModal";
 import BlockedStatsModal from "../components/BlockedStatsModal";
@@ -69,6 +70,7 @@ export default function MoviePage({
   onGoToDownloads,
   onSelect,
 }) {
+  const { t } = useTranslation();
   const [details, setDetails] = useState(null);
   const [playing, setPlaying] = useState(false);
   const [showDownload, setShowDownload] = useState(false);
@@ -322,7 +324,7 @@ export default function MoviePage({
                 setM3u8Url(res.url);
               })
               .catch(() => {
-                if (mounted) setResolveError("Failed to start local player");
+                if (mounted) setResolveError(t("movie.failedToStartPlayer"));
               });
           } else {
             setResolvedPlayerUrl(res.url);
@@ -692,7 +694,7 @@ export default function MoviePage({
                 <span className="age-rating-pill-cert">{rating.cert}</span>
                 {restricted && (
                   <span className="age-rating-pill-label">
-                    Inappropriate for your age setting
+                    {t("movie.restrictedDesc")}
                   </span>
                 )}
               </div>
@@ -716,7 +718,7 @@ export default function MoviePage({
                 <button
                   className="btn btn-primary btn-restricted"
                   disabled
-                  title="This movie has not been released yet"
+                  title={t("movie.unreleasedDesc")}
                 >
                   🔒 Unreleased
                 </button>
@@ -724,13 +726,13 @@ export default function MoviePage({
                 <button
                   className="btn btn-primary btn-restricted"
                   disabled
-                  title="Inappropriate for your age rating setting"
+                  title={t("movie.restrictedDesc")}
                 >
-                  🔒 Restricted
+                  🔒 {t("movie.restricted")}
                 </button>
               ) : (
                 <button className="btn btn-primary" onClick={handlePlay}>
-                  <PlayIcon /> {playing ? "Restart" : "Play"}
+                  <PlayIcon /> {playing ? t("movie.restart") : t("movie.play")}
                 </button>
               )}
               {trailerKey &&
@@ -738,21 +740,21 @@ export default function MoviePage({
                   <button
                     className="btn btn-secondary btn-restricted"
                     disabled
-                    title="Inappropriate for your age rating setting"
+                    title={t("movie.restrictedDesc")}
                   >
-                    🔒 Trailer
+                    🔒 {t("movie.trailer")}
                   </button>
                 ) : (
                   <button
                     className="btn btn-secondary"
                     onClick={() => setShowTrailer(true)}
                   >
-                    <TrailerIcon /> Trailer
+                    <TrailerIcon /> {t("movie.trailer")}
                   </button>
                 ))}
               <button className="btn btn-secondary" onClick={onSave}>
                 {isSaved ? <BookmarkFillIcon /> : <BookmarkIcon />}
-                {isSaved ? "Saved" : "Save"}
+                {isSaved ? t("movie.saved") : t("movie.save")}
               </button>
               {!isUnreleased &&
                 (isWatched ? (
@@ -760,7 +762,7 @@ export default function MoviePage({
                     className="btn btn-ghost watched-btn"
                     onClick={() => onMarkUnwatched?.(progressKey)}
                   >
-                    <WatchedIcon size={16} /> Watched
+                    <WatchedIcon size={16} /> {t("movie.markUnwatched")}
                   </button>
                 ) : (
                   <>
@@ -768,7 +770,7 @@ export default function MoviePage({
                       className="btn btn-ghost"
                       onClick={() => onMarkWatched?.(progressKey)}
                     >
-                      ✓ Mark Watched
+                      ✓ {t("movie.markWatched")}
                     </button>
                     {hasProgress && (
                       <button
@@ -785,7 +787,7 @@ export default function MoviePage({
                   </>
                 ))}
               <button className="btn btn-ghost" onClick={onBack}>
-                <BackIcon /> Back
+                <BackIcon /> {t("movie.back")}
               </button>
             </div>
           </div>
@@ -931,11 +933,11 @@ export default function MoviePage({
                     setMenuPos({ top: rect.bottom + 6, left: rect.left });
                   setShowSourceMenu((v) => !v);
                 }}
-                title="Change source"
+                title={t("movie.changeSource")}
               >
                 <SourceIcon />
                 {PLAYER_SOURCES.find((s) => s.id === playerSource)?.label ??
-                  "Source"}
+                  t("movie.source")}
               </button>
               {/* Sub/Dub toggle, only for AllManga */}
               {playerSource === "allmanga" && (
@@ -963,7 +965,7 @@ export default function MoviePage({
                   setShowSourceMenu(false);
                   setShowBlockedModal(true);
                 }}
-                title="Blocked ads & trackers"
+                title={t("movie.blockedAds")}
               >
                 <ShieldBlockIcon />
                 {blockedSession > 0 && (
@@ -985,7 +987,7 @@ export default function MoviePage({
                   pipUrlRef.current = url;
                   window.electron?.openPipWindow?.(url, item.title);
                 }}
-                title={pipOpen ? "Close pop-out" : "Pop out player"}
+                title={pipOpen ? t("movie.closePopOut") : t("movie.popOutPlayer")}
                 disabled={
                   !pipOpen &&
                   (webviewLoading ||
@@ -1046,7 +1048,7 @@ export default function MoviePage({
                   ? movieDownload.status === "downloading"
                     ? "Downloading… - view in Downloads"
                     : "Already downloaded - view in Downloads"
-                  : "Download"
+                  : t("movie.download")
               }
             >
               {movieDownload ? (
@@ -1070,7 +1072,7 @@ export default function MoviePage({
               {!sourceSupportsProgress(playerSource) && (
                 <span
                   className="player-no-progress-hint"
-                  title="No automatic progress tracking for this source"
+                  title={t("movie.noAutoProgress")}
                 >
                   ⚠ no tracking
                 </span>

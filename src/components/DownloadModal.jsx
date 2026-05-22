@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { CloseIcon, DownloadIcon, SettingsIcon, SubtitlesIcon } from "./Icons";
 import {
   storage,
@@ -26,6 +27,7 @@ export function SubtitleBrowser({
   onClose,
   defaultLang,
 }) {
+  const { t } = useTranslation();
   const [langFilter, setLangFilter] = useState(defaultLang);
   const [browseResults, setBrowseResults] = useState(null);
   const [browsing, setBrowsing] = useState(false);
@@ -114,9 +116,9 @@ export function SubtitleBrowser({
               gap: 6,
             }}
           >
-            <SubtitlesIcon size={14} /> Browse Subtitles
+            <SubtitlesIcon size={14} /> {t("downloadModal.browseSubtitles")}
             {selectedSubs.length > 0
-              ? ` · ${selectedSubs.length} selected`
+              ? ` · ${t("downloadModal.selected", { count: selectedSubs.length })}`
               : ""}
           </span>
           <button className="icon-btn" onClick={() => onClose()}>
@@ -134,7 +136,7 @@ export function SubtitleBrowser({
             flexWrap: "wrap",
           }}
         >
-          <span style={{ fontSize: 12, color: "var(--text3)" }}>Language:</span>
+          <span style={{ fontSize: 12, color: "var(--text3)" }}>{t("downloadModal.language")}</span>
           <select
             value={langFilter}
             onChange={(e) => {
@@ -151,7 +153,7 @@ export function SubtitleBrowser({
               cursor: "pointer",
             }}
           >
-            <option value="">All languages</option>
+            <option value="">{t("downloadModal.allLanguages")}</option>
             {SUBTITLE_LANGUAGES.map((l) => (
               <option key={l.code} value={l.code}>
                 {l.label}
@@ -177,7 +179,7 @@ export function SubtitleBrowser({
                 className="spinner"
                 style={{ width: 16, height: 16, borderWidth: 2 }}
               />{" "}
-              Searching…
+              {t("downloadModal.searchingSubtitles")}
             </div>
           )}
           {browseError && (
@@ -200,7 +202,7 @@ export function SubtitleBrowser({
                 textAlign: "center",
               }}
             >
-              No subtitles found
+              {t("downloadModal.noSubtitlesFound")}
             </div>
           )}
           {!browsing &&
@@ -332,7 +334,7 @@ export function SubtitleBrowser({
                     </div>
                     <div style={{ fontSize: 11, color: "var(--text3)" }}>
                       {r.uploader} · {(r.download_count || 0).toLocaleString()}{" "}
-                      downloads
+                      {t("downloadModal.downloads")}
                     </div>
                   </div>
                 </div>
@@ -352,15 +354,15 @@ export function SubtitleBrowser({
         >
           <span style={{ fontSize: 11, color: "var(--text3)" }}>
             {selectedSubs.length === 0
-              ? "Click rows to select subtitles"
-              : `${selectedSubs.length} subtitle${selectedSubs.length > 1 ? "s" : ""} selected`}
+              ? t("downloadModal.clickToSelect")
+              : t("downloadModal.subtitlesSelected", { count: selectedSubs.length, s: selectedSubs.length > 1 ? "s" : "" })}
           </span>
           <button
             className="btn btn-primary"
             style={{ padding: "6px 18px", fontSize: 13 }}
             onClick={() => onClose()}
           >
-            Done
+            {t("downloadModal.done")}
           </button>
         </div>
       </div>
@@ -384,6 +386,7 @@ export default function DownloadModal({
   posterPath,
   tmdbId,
 }) {
+  const { t } = useTranslation();
   const [downloadPath, setDownloadPath] = useState(
     () => storage.get("downloadPath") || "",
   );
@@ -581,7 +584,7 @@ export default function DownloadModal({
       });
       setDownloadStatus("ok");
     } else {
-      setDownloadStatus(result.error || "Failed to start");
+      setDownloadStatus(result.error || t("downloadModal.failed"));
     }
   };
 
@@ -592,7 +595,7 @@ export default function DownloadModal({
         <div className="download-modal" onClick={(e) => e.stopPropagation()}>
           <div className="download-modal-header">
             <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <DownloadIcon /> Set Download Folder
+              <DownloadIcon /> {t("downloadModal.setFolder")}
             </span>
             <button className="icon-btn" onClick={onClose}>
               <CloseIcon />
@@ -608,14 +611,14 @@ export default function DownloadModal({
               }}
             >
               {settingPath ? (
-                "Choose where downloaded videos should be saved:"
+                t("downloadModal.chooseFolderDesc")
               ) : (
                 <>
                   <span style={{ color: "var(--red)", fontWeight: 600 }}>
-                    No download folder set.
+                    {t("downloadModal.noFolder")}
                   </span>
                   <br />
-                  Choose where to save downloaded videos:
+                  {t("downloadModal.chooseFolder")}
                 </>
               )}
             </div>
@@ -654,14 +657,14 @@ export default function DownloadModal({
                   setSettingPath(false);
                 }}
               >
-                Confirm
+                {t("downloadModal.confirm")}
               </button>
               {settingPath && (
                 <button
                   className="btn btn-ghost"
                   onClick={() => setSettingPath(false)}
                 >
-                  Cancel
+                  {t("downloadModal.cancel")}
                 </button>
               )}
             </div>
@@ -675,7 +678,7 @@ export default function DownloadModal({
                     onOpenSettings("downloads");
                   }}
                 >
-                  <SettingsIcon /> Open Settings
+                  <SettingsIcon /> {t("downloadModal.openSettings")}
                 </button>
               </div>
             )}
@@ -692,7 +695,7 @@ export default function DownloadModal({
         <div className="download-modal" onClick={(e) => e.stopPropagation()}>
           <div className="download-modal-header">
             <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <DownloadIcon /> Download
+              <DownloadIcon /> {t("downloadModal.download")}
             </span>
             <button className="icon-btn" onClick={onClose}>
               <CloseIcon />
@@ -741,7 +744,7 @@ export default function DownloadModal({
                       gap: 6,
                     }}
                   >
-                    <SubtitlesIcon size={14} /> Subtitles
+                    <SubtitlesIcon size={14} /> {t("downloadModal.subtitles")}
                   </span>
                   <div style={{ flex: 1 }} />
                   {/* Toggle */}
@@ -1071,11 +1074,8 @@ export default function DownloadModal({
                       </a>{" "}
                       , for your OS: <code>{binaryHint}</code>
                     </li>
-                    <li>Extract the release into a folder of your choice</li>
-                    <li>
-                      Select that folder below, it must contain{" "}
-                      <code>_internal</code> and the binary
-                    </li>
+                    <li>{t("downloadModal.extractRelease")}</li>
+                    <li>{t("downloadModal.selectFolderBelow", { code1: "_internal" })}</li>
                   </ol>
                   <div className="download-folder-row">
                     <button
@@ -1105,23 +1105,20 @@ export default function DownloadModal({
                     downloaderFolder && (
                       <div className="download-error">
                         {downloader.reason === "folder_permission" && (
-                          <>Permission denied, can't read the chosen folder.</>
+                          <>{t("downloadModal.permissionDenied")}</>
                         )}
                         {downloader.reason === "folder_unreadable" && (
-                          <>Folder could not be read. Is it still accessible?</>
+                          <>{t("downloadModal.folderUnreadable")}</>
                         )}
                         {downloader.reason === "no_internal" && (
                           <>
-                            Missing <code>_internal</code> folder. Extract the
-                            full release archive, not just the binary.
+                            {t("downloadModal.missingInternal", { code: "_internal" })}
                           </>
                         )}
                         {(downloader.reason === "no_executable" ||
                           !downloader.reason) && (
                           <>
-                            No executable binary found. On Linux, make sure the
-                            binary has execute permissions (<code>chmod +x</code>
-                            ).
+                            {t("downloadModal.noExecutable", { cmd: "chmod +x" })}
                           </>
                         )}
                       </div>
@@ -1164,8 +1161,8 @@ export default function DownloadModal({
                     >
                       <DownloadIcon />
                       {downloadStatus === "starting"
-                        ? "Starting …"
-                        : "Start Download"}
+                        ? t("downloadModal.starting")
+                        : t("downloadModal.download")}
                     </button>
                   )}
 
@@ -1175,7 +1172,7 @@ export default function DownloadModal({
                         className="download-success"
                         style={{ fontSize: 15, marginBottom: 8 }}
                       >
-                        ✓ Download started!
+                        ✓ {t("downloadModal.success")}
                       </div>
                       <button
                         className="btn btn-ghost"

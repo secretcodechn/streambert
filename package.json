@@ -21,13 +21,15 @@
     "dist:mac": "cross-env ELECTRON_DIST=1 vite build && electron-builder --mac --publish never"
   },
   "dependencies": {
+    "i18next": "^26.2.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-i18next": "^17.0.8"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.7.0",
     "cross-env": "^7.0.3",
-    "electron": "^40.4.1",
+    "electron": "^40.10.1",
     "electron-builder": "^26.7.0",
     "terser": "^5.46.0",
     "vite": "^7.3.1"
@@ -156,7 +158,8 @@
     },
     "electronLanguages": [
       "en-US",
-      "de"
+      "de",
+      "zh-CN"
     ],
     "asarUnpack": [
       "src/styles/fonts/**"

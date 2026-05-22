@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, memo } from "react";
+import { useTranslation } from "react-i18next";
 import { imgUrl, isAnimeContent } from "../utils/api";
 import {
   PlayIcon,
@@ -19,6 +20,7 @@ const MediaCard = memo(function MediaCard({
   ageRating,
   restricted,
 }) {
+  const { t } = useTranslation();
   const title = item.title || item.name;
   const year = (item.release_date || item.first_air_date || "").slice(0, 4);
   const isTV = item.media_type === "tv";
@@ -143,7 +145,7 @@ const MediaCard = memo(function MediaCard({
             {title}
           </div>
           <div className="card-year">
-            {year} · {isTV ? "Series" : "Movie"}
+            {year} · {isTV ? t("mediaCard.series") : t("mediaCard.movie")}
           </div>
         </div>
         <span
@@ -162,11 +164,11 @@ const MediaCard = memo(function MediaCard({
         >
           {isWatched ? (
             <button className="context-menu-item" onClick={handleMarkUnwatched}>
-              ↩ Mark as Unwatched
+              ↩ {t("mediaCard.markUnwatched")}
             </button>
           ) : (
             <button className="context-menu-item" onClick={handleMarkWatched}>
-              ✓ Mark as Watched
+              ✓ {t("mediaCard.markWatched")}
             </button>
           )}
         </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import MediaCard from "../components/MediaCard";
 import TrendingCarousel from "../components/TrendingCarousel";
 import { PlayIcon, StarIcon } from "../components/Icons";
@@ -47,6 +48,7 @@ export default function HomePage({
   history,
   apiKey,
 }) {
+  const { t } = useTranslation();
   const hero = trending[0];
 
   const [recommendedItems, setRecommendedItems] = useState([]);
@@ -227,18 +229,17 @@ export default function HomePage({
         >
           <div style={{ fontSize: 48 }}>📡</div>
           <div style={{ fontSize: 20, fontWeight: 600, color: "var(--text)" }}>
-            No internet connection
+            {t("home.noInternet")}
           </div>
           <div style={{ fontSize: 14, color: "var(--text3)" }}>
-            Trending and search require an internet connection. Your downloads
-            and library still work offline.
+            {t("home.noInternetDesc")}
           </div>
           <button
             className="btn btn-primary"
             style={{ marginTop: 8 }}
             onClick={onRetry}
           >
-            Retry
+            {t("home.retry")}
           </button>
         </div>
       )}
@@ -274,13 +275,13 @@ export default function HomePage({
                 className="btn btn-primary"
                 onClick={() => onSelect(hero)}
               >
-                <PlayIcon /> Watch Now
+                <PlayIcon /> {t("home.watchNow")}
               </button>
               <button
                 className="btn btn-secondary"
                 onClick={() => onSelect(hero)}
               >
-                More Info
+                {t("home.moreInfo")}
               </button>
             </div>
           </div>
@@ -295,7 +296,7 @@ export default function HomePage({
           if (inProgress.length === 0) return null;
           return (
             <div key="continue" className="section">
-              <div className="section-title">Continue Watching</div>
+              <div className="section-title">{t("home.continueWatching")}</div>
               <div className="cards-grid">
                 {inProgress.map((item) => {
                   const pk =
@@ -369,7 +370,7 @@ export default function HomePage({
           if (viewMode === "list")
             return renderList(
               "recommended",
-              "Recommended for You",
+              t("homeRows.recommended"),
               null,
               filteredRecommendedItems,
             );
@@ -377,7 +378,7 @@ export default function HomePage({
             <TrendingCarousel
               key="recommended"
               items={filteredRecommendedItems}
-              title="Recommended for You"
+              title={t("homeRows.recommended")}
               onSelect={onSelect}
               ratingsMap={enrichedRatingsMap}
             />
@@ -389,7 +390,7 @@ export default function HomePage({
           if (viewMode === "list")
             return renderList(
               "trendingMovies",
-              "Trending Movies",
+              t("homeRows.trendingMovies"),
               null,
               trendingMovieItems,
             );
@@ -397,7 +398,7 @@ export default function HomePage({
             <TrendingCarousel
               key="trendingMovies"
               items={trendingMovieItems}
-              title="Trending Movies"
+              title={t("homeRows.trendingMovies")}
               onSelect={onSelect}
               ratingsMap={enrichedRatingsMap}
             />
@@ -409,7 +410,7 @@ export default function HomePage({
           if (viewMode === "list")
             return renderList(
               "trendingTV",
-              "Trending Series",
+              t("homeRows.trendingTV"),
               null,
               trendingTVItems,
             );
@@ -417,7 +418,7 @@ export default function HomePage({
             <TrendingCarousel
               key="trendingTV"
               items={trendingTVItems}
-              title="Trending Series"
+              title={t("homeRows.trendingTV")}
               onSelect={onSelect}
               ratingsMap={enrichedRatingsMap}
             />
@@ -427,12 +428,12 @@ export default function HomePage({
         if (id === "topRated") {
           if (topRatedItems.length === 0) return null;
           if (viewMode === "list")
-            return renderList("topRated", "Top Rated", null, topRatedItems);
+            return renderList("topRated", t("homeRows.topRated"), null, topRatedItems);
           return (
             <TrendingCarousel
               key="topRated"
               items={topRatedItems}
-              title="Top Rated"
+              title={t("homeRows.topRated")}
               onSelect={onSelect}
               ratingsMap={enrichedRatingsMap}
             />

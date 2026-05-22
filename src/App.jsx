@@ -7,6 +7,7 @@ import {
   lazy,
   Suspense,
 } from "react";
+import { useTranslation } from "react-i18next";
 import ErrorBoundary from "./components/ErrorBoundary";
 import KeyboardShortcutsModal from "./components/KeyboardShortcutsModal";
 import WindowTitlebar from "./components/WindowTitlebar";
@@ -32,6 +33,7 @@ const DownloadsPage = lazy(() => import("./pages/DownloadsPage"));
 import { checkForUpdates } from "./utils/updates";
 
 export default function App() {
+  const { t } = useTranslation();
   // apiKey loaded async from secure storage (OS keychain)
   const [apiKey, setApiKey] = useState(null);
   const [apiKeyLoaded, setApiKeyLoaded] = useState(false);
@@ -269,12 +271,12 @@ export default function App() {
         const names = newEpisodeEntries.map((e) => e.title);
         const body =
           names.length === 1
-            ? `${names[0]} has a new episode.`
-            : `${names.slice(0, 3).join(", ")}${
-                names.length > 3 ? ` and ${names.length - 3} more` : ""
-              } have new episodes.`;
+            ? t("app.hasNewEpisode", { name: names[0] })
+            : t("app.haveNewEpisodes", {
+                names: names.slice(0, 3).join(", "),
+              }) + (names.length > 3 ? ` ${t("app.andMore", { count: names.length - 3 })}` : "");
         window.electron.showNotification({
-          title: "New episodes available",
+          title: t("app.newEpisodesNotification"),
           body,
           silent: false,
         });
@@ -288,7 +290,7 @@ export default function App() {
       cancelled = true;
       clearTimeout(episodeDismissTimerRef.current);
     };
-  }, [apiKeyLoaded]);
+  }, [apiKeyLoaded, t]);
 
   // ── Downloads state ──────────────────────────────────────────────────────
   const [downloads, setDownloads] = useState([]);
@@ -415,8 +417,8 @@ export default function App() {
         window.electron.showNotification
       ) {
         window.electron.showNotification({
-          title: "Download complete",
-          body: update.name || "Your download has finished.",
+          title: t("app.downloadComplete"),
+          body: update.name || t("app.downloadCompleteBody"),
           silent: false,
         });
       }
@@ -435,7 +437,7 @@ export default function App() {
       });
     });
     return () => window.electron.offDownloadProgress(handler);
-  }, []);
+  }, [t]);
 
   const handleDownloadStarted = useCallback((newEntry) => {
     setDownloads((prev) => {
@@ -671,7 +673,7 @@ export default function App() {
 
       if (isRemoving) {
         delete next[id];
-        showToast("Removed from watchlist");
+        showToast(t("app.removedFromWatchlist"));
         setSavedOrder((prev) => {
           const currentOrder = prev || Object.keys(currentSaved);
           const newOrder = currentOrder.filter((k) => k !== id);
@@ -687,7 +689,7 @@ export default function App() {
           vote_average: item.vote_average,
           year: (item.release_date || item.first_air_date || "").slice(0, 4),
         };
-        showToast("Added to watchlist");
+        showToast(t("app.addedToWatchlist"));
         setSavedOrder((prev) => {
           const currentOrder = prev || Object.keys(currentSaved);
           const newOrder = [...currentOrder, id];
@@ -698,7 +700,7 @@ export default function App() {
       setSaved(next);
       storage.set("saved", next);
     },
-    [showToast, getMediaType],
+    [showToast, getMediaType, t],
   );
 
   const isSaved = useCallback(
@@ -858,28 +860,22 @@ export default function App() {
           {/* Suspense boundary: lazy page chunks are fetched on first visit */}
           {apiKeyStatus === "invalid_token" && (
             <div className="api-status-banner api-status-error">
-              <span>
-                ⚠ Your TMDB token is invalid, not set or has been revoked.
-                Movies and shows won't load.
-              </span>
+              <span>⚠ {t("app.apiTokenInvalid")}</span>
               <button className="api-status-btn" onClick={changeApiKey}>
-                Update Token
+                {t("app.updateToken")}
               </button>
             </div>
           )}
           {apiKeyStatus === "unreachable" && (
             <div className="api-status-banner api-status-warn">
-              <span>
-                ⚠ Cannot reach TMDB, check your internet connection. Content may
-                not load.
-              </span>
+              <span>⚠ {t("app.apiUnreachable")}</span>
               <button
                 className="api-status-btn"
                 onClick={() =>
                   setApiKeyStatus("checking") || window.location.reload()
                 }
               >
-                Retry
+                {t("app.retry")}
               </button>
             </div>
           )}
@@ -893,7 +889,7 @@ export default function App() {
                   fontSize: 15,
                 }}
               >
-                Laden…
+                {t("app.loading")}
               </div>
             }
           >
@@ -1033,7 +1029,7 @@ export default function App() {
               color: "#fff",
             }}
           >
-            <span>🎉 Streambert v{updateBanner.latest} is available!</span>
+            <span>🎉 {t("app.updateAvailable", { version: updateBanner.latest })}</span>
             <button
               onClick={() => setShowUpdateModal(true)}
               style={{
@@ -1047,7 +1043,7 @@ export default function App() {
                 cursor: "pointer",
               }}
             >
-              Install Update
+              {t("app.installUpdate")}
             </button>
             <button
               onClick={() => setUpdateBanner(null)}
@@ -1115,7 +1111,7 @@ export default function App() {
                     flexShrink: 0,
                   }}
                 />
-                Checking for new episodes…
+                {t("app.checkingNewEpisodes")}
               </div>
             )}
 
@@ -1131,7 +1127,7 @@ export default function App() {
                 }}
               >
                 <span style={{ fontSize: 16 }}>✓</span>
-                No new episodes found
+                {t("app.noNewEpisodes")}
               </div>
             )}
 
@@ -1158,8 +1154,7 @@ export default function App() {
                     <span style={{ color: "var(--red)", fontSize: 15 }}>
                       🎬
                     </span>
-                    New episode
-                    {episodeCheckStatus.entries.length > 1 ? "s" : ""} available
+                    {t("app.newEpisodesAvailable", { s: episodeCheckStatus.entries.length > 1 ? "s" : "" })}
                   </div>
                   <button
                     onClick={() => {
@@ -1239,7 +1234,7 @@ export default function App() {
                             flexShrink: 0,
                           }}
                         >
-                          Season {entry.season}
+                          {t("app.season", { number: entry.season })}
                         </span>
                       )}
                     </li>
@@ -1252,7 +1247,7 @@ export default function App() {
                         paddingTop: 2,
                       }}
                     >
-                      +{episodeCheckStatus.entries.length - 5} more
+                      {t("app.more", { count: episodeCheckStatus.entries.length - 5 })}
                     </li>
                   )}
                 </ul>

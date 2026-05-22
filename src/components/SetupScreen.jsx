@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { StreambertLogo, PlayIcon } from "./Icons";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
@@ -41,32 +42,32 @@ async function validateToken(token) {
   }
 }
 
-function errorMessage(reason, status) {
+function getErrorMessage(reason, status, t) {
   switch (reason) {
     case "invalid_token":
       return {
-        title: "Invalid token",
-        body: "TMDB rejected the token (401 Unauthorized). Make sure you copied the long JWT Read Access Token, not the shorter API Key.",
+        title: t("setup.errorInvalidToken"),
+        body: t("setup.errorInvalidTokenBody"),
       };
     case "forbidden":
       return {
-        title: "Access denied",
-        body: "TMDB returned 403 Forbidden. Your account may be suspended or the token may have been revoked.",
+        title: t("setup.errorForbidden"),
+        body: t("setup.errorForbiddenBody"),
       };
     case "timeout":
       return {
-        title: "Request timed out",
-        body: "TMDB took too long to respond. Check your internet connection and try again.",
+        title: t("setup.errorTimeout"),
+        body: t("setup.errorTimeoutBody"),
       };
     case "unreachable":
       return {
-        title: "Cannot reach TMDB",
-        body: "No connection to api.themoviedb.org. Check your internet connection.",
+        title: t("setup.errorUnreachable"),
+        body: t("setup.errorUnreachableBody"),
       };
     default:
       return {
-        title: "Something went wrong",
-        body: `TMDB returned an unexpected error${status ? ` (HTTP ${status})` : ""}. Try again in a moment.`,
+        title: t("setup.errorGeneric"),
+        body: t("setup.errorGenericBody", { status: status ? `HTTP ${status}` : "" }),
       };
   }
 }
@@ -87,6 +88,7 @@ function ExternalLink({ href, className, children }) {
 }
 
 export default function SetupScreen({ onSave, onSkip }) {
+  const { t } = useTranslation();
   const [key, setKey] = useState("");
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState(null); // { title, body }
@@ -94,11 +96,11 @@ export default function SetupScreen({ onSave, onSkip }) {
   const [focused, setFocused] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => {
+    const timer = setTimeout(() => {
       window.focus();
       inputRef.current?.focus();
     }, 50);
-    return () => clearTimeout(t);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleSubmit = async () => {
@@ -111,7 +113,7 @@ export default function SetupScreen({ onSave, onSkip }) {
     if (result.ok) {
       onSave(token);
     } else {
-      setError(errorMessage(result.reason, result.status));
+      setError(getErrorMessage(result.reason, result.status, t));
     }
   };
 
@@ -121,31 +123,29 @@ export default function SetupScreen({ onSave, onSkip }) {
         <div className="apikey-logo">
           <StreambertLogo />
         </div>
-        <div className="apikey-title">STREAMBERT</div>
+        <div className="apikey-title">{t("setup.title")}</div>
         <p className="apikey-sub">
-          Enter your <strong>free</strong> TMDB{" "}
-          <strong>Read Access Token</strong> to get started.
+          {t("setup.description")}
           <br />
-          Go to{" "}
+          {t("setup.goTo")}{" "}
           <ExternalLink
             className="apikey-link"
             href="https://www.themoviedb.org/settings/api"
           >
-            themoviedb.org → Settings → API
+            {t("setup.settingsApi")}
           </ExternalLink>{" "}
-          and copy the <em>API Read Access Token</em> (the long JWT, not the
-          shorter API Key below).
+          {t("setup.copyToken")}
           <br />
           <ExternalLink
             className="apikey-link"
             href="https://github.com/truelockmc/streambert/blob/main/tmdb-tutorial.md"
           >
-            Step-by-step guide on how to get that Token
+            {t("setup.stepByStep")}
           </ExternalLink>
         </p>
         <input
           className={`apikey-input${error ? " apikey-input-error" : ""}`}
-          placeholder="Paste your TMDB Read Access Token (eyJ...)..."
+          placeholder={t("setup.placeholder")}
           value={key}
           onChange={(e) => {
             setKey(e.target.value);
@@ -181,11 +181,11 @@ export default function SetupScreen({ onSave, onSkip }) {
         >
           {checking ? (
             <>
-              <span className="apikey-spinner" /> Checking…
+              <span className="apikey-spinner" /> {t("setup.checking")}
             </>
           ) : (
             <>
-              <PlayIcon /> Let's go
+              <PlayIcon /> {t("setup.letsGo")}
             </>
           )}
         </button>
@@ -208,7 +208,7 @@ export default function SetupScreen({ onSave, onSkip }) {
             onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text2)")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text3)")}
           >
-            Skip for now
+            {t("setup.skipForNow")}
           </button>
         )}
       </div>

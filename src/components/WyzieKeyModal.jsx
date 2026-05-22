@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { secureStorage, STORAGE_KEYS } from "../utils/storage";
 
 export default function WyzieKeyModal({ onDone, onSkip }) {
+  const { t } = useTranslation();
   const [manualKey, setManualKey] = useState("");
   const [phase, setPhase] = useState("prompt");
   const [errorMsg, setErrorMsg] = useState("");
@@ -27,7 +29,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
         await saveAndFinish(key);
       } else {
         setPhase("manual");
-        setErrorMsg(res.error || "Invalid key, please try again.");
+        setErrorMsg(res.error || t("wyzie.invalidKey"));
       }
     } catch (e) {
       setPhase("manual");
@@ -53,7 +55,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
         await saveAndFinish(res.key);
       } else {
         setPhase("prompt");
-        setErrorMsg("Could not extract API key. Please copy it manually.");
+        setErrorMsg(t("wyzie.couldNotExtract"));
       }
     } catch (e) {
       setPhase("prompt");
@@ -114,10 +116,10 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
             <div
               style={{ fontSize: 15, fontWeight: 700, color: "var(--text)" }}
             >
-              Wyzie Subs requires an API key
+              {t("wyzie.title")}
             </div>
             <div style={{ fontSize: 12, color: "var(--text3)", marginTop: 2 }}>
-              Free, no account required
+              {t("wyzie.free")}
             </div>
           </div>
         </div>
@@ -132,8 +134,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                 marginBottom: 22,
               }}
             >
-              Wyzie Subs now requires a free API key. Claim one instantly by
-              solving a quick captcha, no registration needed.
+              {t("wyzie.description")}
               {errorMsg && (
                 <div
                   style={{
@@ -156,7 +157,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                 style={{ width: "100%", padding: "10px 0", fontSize: 13 }}
                 onClick={handleRedeem}
               >
-                Get free key — opens redeem page
+                {t("wyzie.getFreeKey")}
               </button>
               <button
                 className="btn btn-ghost"
@@ -166,7 +167,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                   setErrorMsg("");
                 }}
               >
-                I already have a key — enter manually
+                {t("wyzie.alreadyHaveKey")}
               </button>
               <button
                 className="btn btn-ghost"
@@ -178,7 +179,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                 }}
                 onClick={onSkip}
               >
-                Skip — use without subtitles
+                {t("wyzie.skip")}
               </button>
             </div>
           </>
@@ -194,7 +195,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                 lineHeight: 1.6,
               }}
             >
-              Paste your Wyzie API key below. It looks like{" "}
+              {t("wyzie.pasteKey")}{" "}
               <code style={{ color: "var(--text)", fontSize: 11 }}>
                 wyzie-xxxxxxxxxxxxxxxx
               </code>
@@ -237,7 +238,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                   setErrorMsg("");
                 }}
               >
-                Back
+                {t("wyzie.back")}
               </button>
               <button
                 className="btn btn-primary"
@@ -245,7 +246,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                 onClick={handleManualSubmit}
                 disabled={!manualKey.trim()}
               >
-                Confirm & validate
+                {t("wyzie.confirmValidate")}
               </button>
             </div>
           </>
@@ -264,9 +265,9 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
             <div
               style={{ color: "var(--text)", fontWeight: 600, marginBottom: 6 }}
             >
-              Complete the captcha in the popup window
+              {t("wyzie.completeCaptcha")}
             </div>
-            Please wait — key will be saved automatically…
+            {t("wyzie.pleaseWait")}
           </div>
         )}
 
@@ -280,7 +281,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
             }}
           >
             <div style={{ fontSize: 28, marginBottom: 12 }}>⏳</div>
-            Validating key…
+            {t("wyzie.validating")}
           </div>
         )}
 
@@ -295,7 +296,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
             }}
           >
             <div style={{ fontSize: 28, marginBottom: 10 }}>✅</div>
-            API key saved! Loading subtitles…
+            {t("wyzie.apiKeySaved")}
           </div>
         )}
 
@@ -311,9 +312,9 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
               }}
             >
               <div style={{ fontSize: 28, marginBottom: 10 }}>⏱️</div>
-              No key received within 10 seconds.
+              {t("wyzie.noKeyReceived")}
               <br />
-              The captcha may not have been completed, or the redirect failed.
+              {t("wyzie.captchaNotCompleted")}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <button
@@ -321,7 +322,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                 style={{ width: "100%", padding: "9px 0", fontSize: 13 }}
                 onClick={handleRedeem}
               >
-                Try again
+                {t("wyzie.tryAgain")}
               </button>
               <button
                 className="btn btn-ghost"
@@ -331,7 +332,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                   setErrorMsg("");
                 }}
               >
-                Enter key manually
+                {t("wyzie.enterKeyManually")}
               </button>
               <button
                 className="btn btn-ghost"
@@ -343,7 +344,7 @@ export default function WyzieKeyModal({ onDone, onSkip }) {
                 }}
                 onClick={onSkip}
               >
-                Skip
+                {t("wyzie.skip")}
               </button>
             </div>
           </>

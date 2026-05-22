@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { CloseIcon, ShieldBlockIcon } from "./Icons";
 
 /**
@@ -11,6 +12,8 @@ export default function BlockedStatsModal({
   alltimeTotal,
   onClose,
 }) {
+  const { t } = useTranslation();
+
   // Close on Escape
   useEffect(() => {
     const handler = (e) => {
@@ -26,7 +29,7 @@ export default function BlockedStatsModal({
         <div className="blocked-modal-header">
           <div className="blocked-modal-title">
             <ShieldBlockIcon size={15} />
-            Ads &amp; Trackers Blocked
+            {t("blocked.title")}
           </div>
           <button
             className="blocked-modal-close"
@@ -39,14 +42,14 @@ export default function BlockedStatsModal({
 
         <div className="blocked-modal-subtitle">
           {sessionTotal > 0
-            ? `${sessionTotal} ad/tracker request${sessionTotal === 1 ? "" : "s"} blocked this session`
-            : "Start playing content to see blocked ads & trackers."}
+            ? t("blocked.thisSession", { count: sessionTotal, s: sessionTotal === 1 ? "" : "s" })
+            : t("blocked.startPlaying")}
         </div>
 
         <div className="blocked-modal-list">
           {sessionDomains.length === 0 ? (
             <div className="blocked-modal-empty">
-              No ads or trackers blocked yet, play something to start.
+              {t("blocked.noneYet")}
             </div>
           ) : (
             sessionDomains.map(([domain, count]) => (
@@ -62,12 +65,13 @@ export default function BlockedStatsModal({
 
         <div className="blocked-modal-footer">
           <ShieldBlockIcon size={13} />
-          All-time:&nbsp;
+          {t("blocked.allTime")}&nbsp;
           <strong>
-            {alltimeTotal.toLocaleString()} ad &amp; tracker request
-            {alltimeTotal === 1 ? "" : "s"}
+            {t("blocked.allTimeCount", {
+              count: alltimeTotal.toLocaleString(),
+              s: alltimeTotal === 1 ? "" : "s",
+            })}
           </strong>
-          &nbsp;blocked
         </div>
       </div>
     </div>

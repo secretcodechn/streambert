@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { imgUrl } from "../utils/api";
 import {
   StreambertLogo,
@@ -25,6 +26,7 @@ export default function Sidebar({
   onBack,
   onShowShortcuts,
 }) {
+  const { t } = useTranslation();
   const [dragOver, setDragOver] = useState(null);
   const dragItem = useRef(null);
   const dragNode = useRef(null);
@@ -109,27 +111,27 @@ export default function Sidebar({
       </div>
 
       {canGoBack && (
-        <SideBtn onClick={onBack} icon={<BackIcon />} label="Back (Ctrl+Z)" />
+        <SideBtn onClick={onBack} icon={<BackIcon />} label={t("sidebar.back")} />
       )}
 
-      <SideBtn onClick={onSearch} icon={<SearchIcon />} label="Search  (⌘F)" />
+      <SideBtn onClick={onSearch} icon={<SearchIcon />} label={t("sidebar.search")} />
       <SideBtn
         active={page === "home"}
         onClick={() => onNavigate("home")}
         icon={<HomeIcon />}
-        label="Home"
+        label={t("sidebar.home")}
       />
       <SideBtn
         active={page === "history"}
         onClick={() => onNavigate("history")}
         icon={<HistoryIcon />}
-        label="Library & History"
+        label={t("sidebar.library")}
       />
       <SideBtn
         active={page === "downloads"}
         onClick={() => onNavigate("downloads")}
         icon={<DownloadsQueueIcon />}
-        label="Downloads"
+        label={t("sidebar.downloads")}
         badge={activeDownloads > 0 ? activeDownloads : null}
       />
 
@@ -207,7 +209,7 @@ export default function Sidebar({
               setContextMenu(null);
             }}
           >
-            Remove
+            {t("sidebar.remove")}
           </div>
         </div>
       )}
@@ -216,22 +218,22 @@ export default function Sidebar({
         <SideBtn
           onClick={onShowShortcuts}
           icon={<HelpIcon />}
-          label="Help & Shortcuts (?)"
+          label={t("sidebar.help")}
         />
         <SideBtn
           active={page === "settings"}
           onClick={() => onNavigate("settings")}
           icon={<SettingsIcon />}
-          label="Settings"
+          label={t("sidebar.settings")}
         />
         <button
           className="sidebar-btn"
           onClick={() => window.electron?.quitApp?.()}
-          title="Quit App"
+          title={t("sidebar.quitApp")}
           style={{ color: "#e53e3e", marginTop: 4 }}
         >
           <QuitIcon />
-          <span className="tooltip">Quit App</span>
+          <span className="tooltip">{t("sidebar.quitApp")}</span>
         </button>
       </div>
     </div>

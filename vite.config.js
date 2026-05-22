@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks: {
             react: ["react", "react-dom"],
+            i18n: ["i18next", "react-i18next"],
             settings: ["./src/pages/SettingsPage"],
             movie: ["./src/pages/MoviePage"],
             tv: ["./src/pages/TVPage"],

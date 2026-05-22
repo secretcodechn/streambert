@@ -80,6 +80,8 @@ export const STORAGE_KEYS = {
   DL_SHOW_UNTRACKED: "dlShowUntracked",
   // Cache for new-episode startup check
   EPISODE_RELEASE_CACHE: "episodeReleaseCache",
+  // UI language ("en" | "zh")
+  LANGUAGE: "language",
 };
 
 export const getApiKey = () => storage.get(STORAGE_KEYS.API_KEY);

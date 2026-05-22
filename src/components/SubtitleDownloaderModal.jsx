@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { TrashIcon, SubtitlesIcon, SettingsIcon } from "./Icons";
 import { storage, STORAGE_KEYS, secureStorage } from "../utils/storage";
 import { SUBTITLE_LANGUAGES } from "../utils/subtitles";
@@ -11,6 +12,7 @@ export default function SubtitleDownloaderModal({
   onSubtitleDeleted,
   onOpenSettings,
 }) {
+  const { t } = useTranslation();
   const defaultLang = storage.get(STORAGE_KEYS.SUBTITLE_LANG) || "en";
   const [subdlApiKey, setSubdlApiKey] = useState(null); // null = not yet loaded
   const [wyzieApiKey, setWyzieApiKey] = useState(null); // null = not yet loaded
@@ -343,7 +345,7 @@ export default function SubtitleDownloaderModal({
                 cursor: "pointer",
               }}
             >
-              <option value="">All languages</option>
+              <option value="">{t("tv.allLanguages")}</option>
               {SUBTITLE_LANGUAGES.map((l) => (
                 <option key={l.code} value={l.code}>
                   {l.label}
@@ -653,7 +655,7 @@ export default function SubtitleDownloaderModal({
                     ? "Downloading…"
                     : selectedSubs.length > 0
                       ? `↓ Download (${selectedSubs.length})`
-                      : "Select subtitles above"}
+                      : t("tv.selectSubtitlesAbove")}
                 </button>
                 {!dl.filePath && (
                   <span style={{ fontSize: 12, color: "var(--red)" }}>

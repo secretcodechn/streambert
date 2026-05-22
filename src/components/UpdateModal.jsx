@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 // ── Inline markdown + GitHub formatter ──────────────────────────────
 // Handles: ~~strike~~, **bold**, *italic*, _italic_, `code`,
@@ -415,6 +416,7 @@ export default function UpdateModal({
   activeDownloads = 0,
   onClose,
 }) {
+  const { t } = useTranslation();
   const { latest, current, url, changelog, assets } = updateInfo;
 
   const [phase, setPhase] = useState("idle"); // idle | downloading | installing | done | error
@@ -455,7 +457,7 @@ export default function UpdateModal({
     cancelRef.current = false;
     setPhase("downloading");
     setProgress(0);
-    setProgressLabel("Preparing…");
+    setProgressLabel(t("update.preparing"));
 
     try {
       const result = await window.electron.downloadAndInstallUpdate({
@@ -463,13 +465,13 @@ export default function UpdateModal({
         format,
       });
       if (cancelRef.current) return;
-      if (!result.ok) throw new Error(result.error || "Update failed");
+      if (!result.ok) throw new Error(result.error || t("update.failed"));
       setPhase("installing");
-      setProgressLabel("Launching installer…");
+      setProgressLabel(t("update.launchingInstaller"));
     } catch (e) {
       if (cancelRef.current) return;
       setPhase("error");
-      setErrorMsg(e.message || "Update failed");
+      setErrorMsg(e.message || t("update.failed"));
     }
   };
 
@@ -481,14 +483,9 @@ export default function UpdateModal({
     onClose();
   };
 
-  const formatLabel = {
-    appimage: "AppImage",
-    deb: ".deb package",
-    pacman: ".pacman (Arch)",
-    exe: "Windows installer",
-    dmg: "macOS installer",
-    dmg_arm64: "macOS (Apple Silicon)",
-  }[format] || "installer";
+  const formatLabel = format
+    ? t(`update.formatLabels.${format}`)
+    : t("update.formatLabels.default");
 
   const busy = phase === "downloading" || phase === "installing";
 
@@ -556,7 +553,7 @@ export default function UpdateModal({
                     letterSpacing: 1,
                   }}
                 >
-                  UPDATE AVAILABLE
+                  {t("update.title")}
                 </span>
               </div>
               <div
@@ -591,7 +588,7 @@ export default function UpdateModal({
                 >
                   v{latest} ↗
                 </a>
-                is ready to install
+                {t("update.isReadyToInstall")}
                 {format && (
                   <span
                     style={{
@@ -646,7 +643,7 @@ export default function UpdateModal({
                   marginBottom: 12,
                 }}
               >
-                What's New
+                {t("update.whatsNew")}
               </div>
               <div>{renderChangelog(changelog)}</div>
             </>
@@ -658,7 +655,7 @@ export default function UpdateModal({
                 fontStyle: "italic",
               }}
             >
-              No changelog available.
+              {t("update.noChangelog")}
             </div>
           )}
         </div>
@@ -683,8 +680,7 @@ export default function UpdateModal({
                 gap: 6,
               }}
             >
-              ⚠ {activeDownloads} download{activeDownloads > 1 ? "s" : ""}{" "}
-              running, finish or cancel them before updating.
+              ⚠ {t("update.downloadsRunning", { count: activeDownloads, s: activeDownloads > 1 ? "s" : "" })}
             </div>
           )}
 
@@ -693,18 +689,7 @@ export default function UpdateModal({
             <div
               style={{ fontSize: 12, color: "var(--text3)", marginBottom: 12 }}
             >
-              Could not detect install format. Use the{" "}
-              <a
-                href={url}
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.electron?.openExternal(url);
-                }}
-                style={{ color: "var(--red)", cursor: "pointer" }}
-              >
-                GitHub releases page
-              </a>{" "}
-              to download manually.
+              {t("update.noFormat")}
             </div>
           )}
 
@@ -723,8 +708,8 @@ export default function UpdateModal({
                 <span>
                   {progressLabel ||
                     (phase === "downloading"
-                      ? "Downloading update…"
-                      : "Installing…")}
+                      ? t("update.downloading")
+                      : t("update.installing"))}
                 </span>
                 {phase === "downloading" && (
                   <span>{Math.round(progress)}%</span>
@@ -774,7 +759,7 @@ export default function UpdateModal({
                     cursor: "pointer",
                   }}
                 >
-                  Download manually ↗
+                  {t("update.downloadManually")} ↗
                 </a>
               </span>
             </div>
@@ -783,14 +768,14 @@ export default function UpdateModal({
           {/* Done */}
           {phase === "done" && (
             <div style={{ fontSize: 13, color: "#48c774", marginBottom: 12 }}>
-              ✓ Update downloaded, installer is running
+              ✓ {t("update.updateDownloaded")}
             </div>
           )}
 
           {/* Buttons */}
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
             <button className="btn btn-ghost" onClick={handleCancel}>
-              {phase === "downloading" ? "Cancel" : "Close"}
+              {phase === "downloading" ? t("update.cancel") : t("update.close")}
             </button>
             {phase === "idle" && (
               <>
@@ -814,7 +799,7 @@ export default function UpdateModal({
                     cursor: "pointer",
                   }}
                 >
-                  GitHub ↗
+                  {t("update.github")} ↗
                 </a>
                 <button
                   className="btn"
@@ -831,7 +816,7 @@ export default function UpdateModal({
                     cursor: canInstall ? "pointer" : "not-allowed",
                   }}
                 >
-                  Install Update
+                  {t("update.installUpdate")}
                 </button>
               </>
             )}
